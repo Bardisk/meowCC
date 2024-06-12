@@ -102,6 +102,7 @@ $(BUILD_DIR)/meowCC: $(OBJS)
 # 	find . -name "*.outl" | xargs rm -f
 
 clean:
-	rm -rf build
+	@-rm -rf build
+	@-rm -rf output
 
 .PHONY: all clean lexer_test expr_test all_test
