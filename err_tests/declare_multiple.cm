@@ -1,0 +1,2 @@
+/* declaring multiple variables is not allowed */
+int a, b;

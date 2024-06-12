@@ -1,0 +1,41 @@
+/* a fun-declaration */
+int samplefunc(int a, int b) {
+  int c;
+  c = a + b;
+  return c;
+}
+
+/* var declaration */ 
+int samplenumber;
+/* var(array) declaration */
+int samplearray[10];
+/* main with no argument */
+int main(void) {
+  /* local declarations */
+  int a[10];
+  int b;
+  int c;
+  /* assignment */
+  a[3] = 5;
+  /* expression */
+  b = (1 + 9 * 7) * (2 + a[1] < 3);
+  /* a function call with compounding */
+  {c = samplefunc((a[1] + 45), b);}
+  {;;}
+  {{
+
+  }}
+  /* selection statement */
+  if (samplefunc(4, 1 == 4)>a[4]) {
+    
+  } if (a[3] != a[5]) {
+    /* iteration statement */
+    while (a[4]) {
+      a[4] = a[4] - 1;
+    }
+  } else {
+    {0;}
+  }
+  /* return statement */
+  return a[9] * (2 + 3);
+}

@@ -1,0 +1,4 @@
+/* wrong brackets */
+int samplefunc(int a, int b) [
+  
+]

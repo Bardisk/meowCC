@@ -1,0 +1,5 @@
+int samplefunc(int a, int b) {
+  /* assigning 
+  int c;
+  return c;
+}

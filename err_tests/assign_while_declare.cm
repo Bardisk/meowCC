@@ -1,0 +1,5 @@
+int samplefunc(int a, int b) {
+  /* assigning while declaring is not allowed */
+  int c = a + b;
+  return c;
+}

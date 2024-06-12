@@ -1,0 +1,9 @@
+int samplefunc(int a, int b) {
+  int c;
+  c = 9;
+  {{
+
+
+  }
+  return c;
+}

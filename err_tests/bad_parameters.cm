@@ -1,0 +1,2 @@
+/* bad parameters */
+int main(int a, v, d)

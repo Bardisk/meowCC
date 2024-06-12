@@ -1,0 +1,6 @@
+void main(void) {
+  int kk;
+  while ({kk;}) {
+    0;
+  } 
+}

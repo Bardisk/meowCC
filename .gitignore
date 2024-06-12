@@ -1,0 +1,19 @@
+*
+*.*
+
+# gitignore
+!.gitignore
+
+# sources
+!*.cm
+!*.c
+!*.h
+!*.exp
+
+# folders
+!*_tests
+!include
+!source
+
+# Makefile
+!Makefile
