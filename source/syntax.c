@@ -710,8 +710,9 @@ syntax_t* statement_list(bool last) {
   // whether emptiable
   syntax_t *stmt = statement(istyp(RC) ? false : last);
   if (stmt != NULL) {
-    // not necessary
-    syntax_t *stmtl = statement_list(false);
+    // necessary
+    // statement_list -> statement statement_list
+    syntax_t *stmtl = statement_list(last);
     if (stmtl == NULL || stmtl->symbol.size == 0) {
       if (stmtl) free(stmtl);
       return new_symbol("statement_list", stmt->symbol.lineno, 1, stmt);
