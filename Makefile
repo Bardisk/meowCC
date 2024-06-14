@@ -43,14 +43,16 @@ ALL_TESTS_ST = $(addprefix $(OUT_DIR)/, $(ALL_TESTS:%.cm=%.st))
 EXPR_TESTS_ST = $(addprefix $(OUT_DIR)/, $(EXPR_TESTS:%.exp=%.st))
 
 define test
+	@echo ------------------------------------------------------;
 	@-$(1); \
 	if [ $$? -eq 0 ]; \
 	then \
-		echo -e "\e[32mACCEPT\e[0m\t: $(shell basename $(2))"; \
+		echo -e "\e[32mACCEPT\e[0m\t: $(patsubst $(WORK_DIR)/%,%,$(2))"; \
+		echo $(patsubst $(WORK_DIR)/%,%,$(3));\
 	else \
-		echo -e "\e[31mERROR\e[0m\t: $(shell basename $(2))"; \
+		echo -e "\e[31mERROR\e[0m\t: $(patsubst $(WORK_DIR)/%,%,$(2))"; \
 		echo -en "\e[37m";\
-		head -n 1 $(2);\
+		head -n 1 $(3);\
 		echo -en "\e[0m";\
 	fi;
 endef
@@ -59,7 +61,7 @@ endef
 $(OUT_DIR)/%.outl: %.cm all 
 	@mkdir -p $(dir $@)
 ifndef DEBUGGING
-	$(call test, $(BUILD_DIR)/meowCC -l $< > $@ 2>&1, $@)
+	$(call test, $(BUILD_DIR)/meowCC -l $< > $@ 2>&1, $<, $@)
 else
 	@-$(GDB) $(BUILD_DIR)/meowCC -ex "start -dl $< > $@ 2>&1"
 endif
@@ -68,7 +70,7 @@ endif
 $(OUT_DIR)/%.st: %.cm all 
 	@mkdir -p $(dir $@)
 ifndef DEBUGGING
-	$(call test, $(BUILD_DIR)/meowCC $< > $@ 2>&1, $@)
+	$(call test, $(BUILD_DIR)/meowCC $< > $@ 2>&1, $<, $@)
 else
 	@-$(GDB) $(BUILD_DIR)/meowCC -ex "start -d $< > $@ 2>&1"
 endif
@@ -77,7 +79,7 @@ endif
 $(OUT_DIR)/%.st: %.exp all
 	@mkdir -p $(dir $@)
 ifndef DEBUGGING
-	$(call test, $(BUILD_DIR)/meowCC -e $< > $@ 2>&1, $@)
+	$(call test, $(BUILD_DIR)/meowCC -e $< > $@ 2>&1, $<, $@)
 else
 	@-$(GDB) $(BUILD_DIR)/meowCC -ex "start -de $< > $@ 2>&1"
 endif
