@@ -1301,7 +1301,7 @@ syntax_t *mulop(bool last) {
       // simple_expression -> additive_expression
       return new_symbol("simple_expression", ae->symbol.lineno, 1, ae);
     } else {
-      syntax_t *ae2 = additive_expression(false);
+      syntax_t *ae2 = additive_expression(last);
       if (ae2 == NULL) {
         // simple_expression -> additive_expression
         // give back the relop
@@ -1347,12 +1347,12 @@ syntax_t *mulop(bool last) {
     syntax_t *mul = mulop(false);
     syntax_t *fac;
     if (mul == NULL) fac = NULL;
-    else fac = factor(false);
+    else fac = factor(last);
     while (mul != NULL && fac != NULL) {
       left = new_symbol("term", left->symbol.lineno, 3, left, mul, fac);
       mul = mulop(false);
       if (mul == NULL) fac = NULL;
-      else fac = factor(false);
+      else fac = factor(last);
     } 
     // we may get a redundant mulop finally
     if (mul != NULL) {
@@ -1381,12 +1381,12 @@ syntax_t *mulop(bool last) {
     syntax_t *add = addop(false);
     syntax_t *ter;
     if (add == NULL) ter = NULL;
-    else ter = term(false);
+    else ter = term(last);
     while (ter != NULL && add != NULL) {
       left = new_symbol("additive_expression", left->symbol.lineno, 3, left, add, ter);
       add = addop(false);
       if (add == NULL) ter = NULL;
-      else ter = term(false);
+      else ter = term(last);
     } 
     // we may get a redundant addop finally
     if (add != NULL) {
@@ -1451,7 +1451,7 @@ syntax_t *mulop(bool last) {
     syntax_t *com, *exp;
     if (istyp(COMMA)) {
       com = advance();
-      exp = expression(true);
+      exp = expression(last);
     } else {
       com = exp = NULL;
     }
@@ -1459,7 +1459,7 @@ syntax_t *mulop(bool last) {
       left = new_symbol("arg_list", left->symbol.lineno, 3, left, com, exp);
       if (istyp(COMMA)) {
         com = advance();
-        exp = expression(true);
+        exp = expression(last);
       } else {
         com = exp = NULL;
       }

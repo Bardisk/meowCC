@@ -273,7 +273,7 @@ syntax_t *arg_list(bool last) {
   syntax_t *com, *exp;
   if (istyp(COMMA)) {
     com = advance();
-    exp = expression(true);
+    exp = expression(last);
   } else {
     com = exp = NULL;
   }
@@ -281,7 +281,7 @@ syntax_t *arg_list(bool last) {
     left = new_symbol("arg_list", left->symbol.lineno, 3, left, com, exp);
     if (istyp(COMMA)) {
       com = advance();
-      exp = expression(true);
+      exp = expression(last);
     } else {
       com = exp = NULL;
     }
