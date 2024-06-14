@@ -1,3 +1,5 @@
+
+
 GDB = gdb
 
 # DIRS
@@ -20,7 +22,7 @@ CFLAGS += $(INC_FLAG)
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	@$(CC) -c $(CFLAGS) $< -o $@ 
-	@echo COMPILE CC $(shell basename $@)
+	@echo -e "\e[32mCOMPILE\e[0m CC $(shell basename $@)"
 
 -include $(OBJS:%.o=%.d)
 
@@ -40,55 +42,46 @@ ALL_TESTS_OUTL = $(addprefix $(OUT_DIR)/, $(ALL_TESTS:%.cm=%.outl))
 ALL_TESTS_ST = $(addprefix $(OUT_DIR)/, $(ALL_TESTS:%.cm=%.st))
 EXPR_TESTS_ST = $(addprefix $(OUT_DIR)/, $(EXPR_TESTS:%.exp=%.st))
 
+define test
+	@-$(1); \
+	if [ $$? -eq 0 ]; \
+	then \
+		echo -e "\e[32mACCEPT\e[0m\t: $(shell basename $(2))"; \
+	else \
+		echo -e "\e[31mERROR\e[0m\t: $(shell basename $(2))"; \
+		echo -en "\e[37m";\
+		head -n 1 $(2);\
+		echo -en "\e[0m";\
+	fi;
+endef
 
 # lexer test
 $(OUT_DIR)/%.outl: %.cm all 
 	@mkdir -p $(dir $@)
 ifndef DEBUGGING
-	@-$(BUILD_DIR)/meowCC -l $< > $@ 2>&1; \
-	if [ $$? -eq 0 ]; \
-	then \
-		echo -en "\e[32mACCEPT\e[0m\t:"; \
-	else \
-		echo -en "\e[31mERROR\e[0m\t:"; \
-	fi;
+	$(call test, $(BUILD_DIR)/meowCC -l $< > $@ 2>&1, $@)
 else
-	@-$(GDB) $(BUILD_DIR)/meowCC -ex "start -l $< > $@ 2>&1"
+	@-$(GDB) $(BUILD_DIR)/meowCC -ex "start -dl $< > $@ 2>&1"
 endif
-	@echo " $(shell basename $@)"
 
 # whole test
 $(OUT_DIR)/%.st: %.cm all 
 	@mkdir -p $(dir $@)
 ifndef DEBUGGING
-	@-$(BUILD_DIR)/meowCC $< > $@ 2>&1; \
-	if [ $$? -eq 0 ]; \
-	then \
-		echo -en "\e[32mACCEPT\e[0m\t:"; \
-	else \
-		echo -en "\e[31mERROR\e[0m\t:"; \
-	fi;
+	$(call test, $(BUILD_DIR)/meowCC $< > $@ 2>&1, $@)
 else
-	@-$(GDB) $(BUILD_DIR)/meowCC -ex "start $< > $@ 2>&1"
+	@-$(GDB) $(BUILD_DIR)/meowCC -ex "start -d $< > $@ 2>&1"
 endif
-	@echo " $(shell basename $@)"
 
 # expr test
 $(OUT_DIR)/%.st: %.exp all
-ifndef DEBUGGING
 	@mkdir -p $(dir $@)
-	@-$(BUILD_DIR)/meowCC -e $< > $@ 2>&1; \
-	if [ $$? -eq 0 ]; \
-	then \
-		echo -en "\e[32mACCEPT\e[0m\t:"; \
-	else \
-		echo -en "\e[31mERROR\e[0m\t:"; \
-	fi;
+ifndef DEBUGGING
+	$(call test, $(BUILD_DIR)/meowCC -e $< > $@ 2>&1, $@)
 else
-	@-$(GDB) $(BUILD_DIR)/meowCC -ex "start -e $< > $@ 2>&1"
+	@-$(GDB) $(BUILD_DIR)/meowCC -ex "start -de $< > $@ 2>&1"
 endif
-	@echo " $(shell basename $@)"
-
+	
 lexer_test: all $(ALL_TESTS_OUTL)
 
 expr_test: all $(EXPR_TESTS_ST)
@@ -98,7 +91,7 @@ all_test: all $(ALL_TESTS_ST)
 
 $(BUILD_DIR)/meowCC: $(OBJS)
 	@$(CC) $(OBJS) -o $@
-	@echo LINK LD $(shell basename $@)  
+	@echo -e "\e[33mLINK\e[0m LD $(shell basename $@)"
 
 # clean_outl:
 # 	find . -name "*.outl" | xargs rm -f
