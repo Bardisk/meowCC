@@ -206,18 +206,16 @@ syntax_t *term(bool last) {
   syntax_t *mul = mulop(false);
   syntax_t *fac;
   if (mul == NULL) fac = NULL;
-  else fac = factor(false);
+  else fac = factor(last);
   while (mul != NULL && fac != NULL) {
     left = new_symbol("term", left->symbol.lineno, 3, left, mul, fac);
     mul = mulop(false);
     if (mul == NULL) fac = NULL;
-    else fac = factor(false);
+    else fac = factor(last);
   } 
   // we may get a redundant mulop finally
   if (mul != NULL) {
-    // we dont care the memory leak
-    // free(mul);
-    --current_token_cnt;
+    NONLAST_FAIL;
   }
   if (strcmp(left->symbol.name, "factor") == 0) {
     // term -> factor
@@ -290,8 +288,7 @@ syntax_t *arg_list(bool last) {
   }
   // redundant comma
   if (com) {
-    // free(com)
-    current_token_cnt--;
+    NONLAST_FAIL;
   }
   if (strcmp(left->symbol.name, "expression") == 0) {
     // arg_list -> expression
@@ -327,8 +324,7 @@ syntax_t* param_list(bool last) {
   }
   // redundant comma
   if (com) {
-    // free(com)
-    current_token_cnt--;
+    NONLAST_FAIL;
   }
   if (strcmp(left->symbol.name, "param") == 0) {
     // param_list -> param
@@ -387,13 +383,14 @@ syntax_t* simple_expression(bool last) {
     // simple_expression -> additive_expression
     return new_symbol("simple_expression", ae->symbol.lineno, 1, ae);
   } else {
-    syntax_t *ae2 = additive_expression(false);
+    syntax_t *ae2 = additive_expression(last);
     if (ae2 == NULL) {
       // simple_expression -> additive_expression
       // give back the relop
       // actually this will result in a failure afterwards...
-      --current_token_cnt;
-      return new_symbol("simple_expression", ae->symbol.lineno, 1, ae);
+      // --current_token_cnt;
+      // return new_symbol("simple_expression", ae->symbol.lineno, 1, ae);
+      NONLAST_FAIL;
     } else {
       // simple_expression -> additive_expression relop additive_expression
       return new_symbol("simple_expression", ae->symbol.lineno, 3, ae, rel, ae2);
@@ -413,18 +410,16 @@ syntax_t* additive_expression(bool last) {
   syntax_t *add = addop(false);
   syntax_t *ter;
   if (add == NULL) ter = NULL;
-  else ter = term(false);
+  else ter = term(last);
   while (ter != NULL && add != NULL) {
     left = new_symbol("additive_expression", left->symbol.lineno, 3, left, add, ter);
     add = addop(false);
     if (add == NULL) ter = NULL;
-    else ter = term(false);
+    else ter = term(last);
   } 
   // we may get a redundant addop finally
   if (add != NULL) {
-    // we dont care the memory leak
-    // free(add);
-    --current_token_cnt;
+    NONLAST_FAIL;
   }
   if (strcmp(left->symbol.name, "term") == 0) {
     // additive_expression -> term
@@ -627,20 +622,26 @@ syntax_t* compound_stmt(bool last) {
 }
 
 syntax_t* local_declarations(bool last) {
-  syntax_t *vd = var_declaration(false);
-  if (vd == NULL) {
-    // empty
-    return new_symbol("local_declarations", line_number, 0);
-  } else {
+  SAVE_CONT;
+  if (istyp(TYPE)) {
+    // not empty
+    syntax_t *vd = var_declaration(last);
+    if (vd == NULL) {
+      NONLAST_FAIL;
+    }
     syntax_t *ld = local_declarations(last);
-    // emptiable
-    assert(ld != NULL);
+    if (ld == NULL) {
+      NONLAST_FAIL;
+    }
     // ld is empty
     if (ld->symbol.size == 0) {
       free(ld);
       return new_symbol("local_declarations", vd->symbol.lineno, 1, vd);
     }
     return new_symbol("local_declarations", vd->symbol.lineno, 2, vd, ld);
+  } else {
+    // empty
+    return new_symbol("local_declarations", line_number, 0);
   }
 }
 
@@ -707,8 +708,11 @@ syntax_t* declaration_list(bool last) {
 
 syntax_t* statement_list(bool last) {
   SAVE_CONT;
-  // whether emptiable
-  syntax_t *stmt = statement(istyp(RC) ? false : last);
+  if (istyp(RC)) {
+    // empty
+    return new_symbol("statement_list", line_number, 0);
+  }
+  syntax_t *stmt = statement(last);
   if (stmt != NULL) {
     // necessary
     // statement_list -> statement statement_list
@@ -720,13 +724,7 @@ syntax_t* statement_list(bool last) {
       return new_symbol("statement_list", stmt->symbol.lineno, 2, stmt, stmtl);
     }
   } else {
-    // empty
-    if (istyp(RC)) {
-      return new_symbol("statement_list", line_number, 0);
-    }
-    else {
-      NONLAST_FAIL;
-    }
+    NONLAST_FAIL;
   }
 }
 
@@ -761,7 +759,7 @@ syntax_t* fun_declaration(bool last) {
 }
 
 syntax_t* var_declaration(bool last) {
-  // param -> type ID ; | type ID [ NUM ] ;
+  // var_declaration -> type ID ; | type ID [ NUM ] ;
   SAVE_CONT;
   syntax_t *type, *id, *lb, *rb, *num, *semi;
   if (!istyp(TYPE)) {

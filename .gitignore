@@ -14,6 +14,10 @@
 !*_tests
 !include
 !source
+!pics
 
 # Makefile
 !Makefile
+
+# Readme
+!README.md
