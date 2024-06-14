@@ -289,11 +289,11 @@ syntax_t* arg_list(bool last);
 
 ##### 获取单个终结符节点
 
-`advance()` 函数实现了析取单个终结符，并将当前位置后移一位的操作：
+`advance()` 函数实现了析取单个终结符，并将当前位置后移一位的操作。见 `source/syntax.c`。
 
 ##### 报错
 
-可以实现一个报错的工具函数，以减少工作量。报错给出行号，出错原因和出现错误的符号。
+可以实现一个报错的工具函数，以减少工作量。报错给出行号，出错原因和出现错误的符号。见 `source/syntax.c`。
 
 ##### `EOT`
 
@@ -344,7 +344,7 @@ syntax_t* arg_list(bool last);
 
 当可以选择的产生式有多个时，递归下降分析器的正确性是难以被保证的。因此在实际实现递归下降分析函数时，需要通过启发式的预测使得候选产生式只有一个，并通过具体的文法分析来说明预测和分析的正确性。
 
-以下根据使用的预测方法，分类讨论所有符号的递归下降分析函数的实现。
+以下根据使用的预测方法，分类讨论所有符号的递归下降分析函数的实现，具体实现可见 `source/syntax.c`。
 
 ##### 运算符类符号
 
@@ -397,10 +397,8 @@ syntax_t* arg_list(bool last);
 
 注：为了语法分析树的美观，删除了推导为空的列表类符号，并且允许列表类符号推导为单个符号。
 
-- declaration_list -> declaration declaration_list | declaration
-  如果末尾不是 EOT，说明必须采用长产生式（因为必须接续 EOT）；否则则必须采用短产生式（因为下一个符号不能以 EOT 起始）
-- local_declarations -> empty | var_declaration local_declarations
-  下一个符号（var_declaration）唯一可能起始的终结符是 type，如果下一个终结符不是 type，那么说明必须用空产生式；如果是，由于本符号（local_declarations）不能接续 type，那么说明必须用长产生式。
+- declaration_list -> declaration declaration_list | declaration<br/>如果末尾不是 EOT，说明必须采用长产生式（因为必须接续 EOT）；否则则必须采用短产生式（因为下一个符号不能以 EOT 起始）
+- local_declarations -> empty | var_declaration local_declarations<br/>下一个符号（var_declaration）唯一可能起始的终结符是 type，如果下一个终结符不是 type，那么说明必须用空产生式；如果是，由于本符号（local_declarations）不能接续 type，那么说明必须用长产生式。
 - args -> empty | arg_list
 - params -> void | param_list
 - simple_expression -> additive_expression | additive_expression relop additive_expression
