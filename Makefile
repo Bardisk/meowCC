@@ -18,8 +18,9 @@ CFLAGS = -g -std=c99 -Wall -Wextra -Wshadow -Wconversion -MMD
 CFLAGS += $(INC_FLAG)
 
 $(BUILD_DIR)/%.o: %.c
-	mkdir -p $(dir $@)
-	$(CC) -c $(CFLAGS) $< -o $@ 
+	@mkdir -p $(dir $@)
+	@$(CC) -c $(CFLAGS) $< -o $@ 
+	@echo COMPILE CC $(shell basename $@)
 
 -include $(OBJS:%.o=%.d)
 
@@ -96,7 +97,8 @@ all_test: all $(ALL_TESTS_ST)
 
 
 $(BUILD_DIR)/meowCC: $(OBJS)
-	$(CC) $(OBJS) -o $@
+	@$(CC) $(OBJS) -o $@
+	@echo LINK LD $(shell basename $@)  
 
 # clean_outl:
 # 	find . -name "*.outl" | xargs rm -f

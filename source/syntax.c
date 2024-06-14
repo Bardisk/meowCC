@@ -61,7 +61,7 @@ syntax_t *new_symbol(const char *name, int lineno, int size, ...) {
   if (!size) {
     return ret;
   }
-  ret->symbol.child = (syntax_t **) malloc(size * sizeof(syntax_t*));  // 分配内存存储子节点
+  ret->symbol.child = (syntax_t **) malloc((unsigned) size * sizeof(syntax_t*));  // 分配内存存储子节点
 
   va_list args;
   va_start(args, size);

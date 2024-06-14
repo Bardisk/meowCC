@@ -53,7 +53,7 @@ int main(int argc, char *argv[]){
   }
   
   int line_number = 1, max_token_cnt = 1048576;
-  token_list = (token_t **) malloc(max_token_cnt * sizeof(token_t *));
+  token_list = (token_t **) malloc((unsigned) max_token_cnt * sizeof(token_t *));
 
   token_t *now_token;
   while ((now_token = getToken(source_fp, &line_number)) != NULL) {
@@ -71,8 +71,8 @@ int main(int argc, char *argv[]){
   
   if (lexer_only || debug_lexicon) {
     for (int i = 0; i < token_cnt; i++) {
-      token_t *now_token = token_list[i];
-      printf("Token {name: %s, line: %d, value: %s}\n", now_token->name, now_token->lineno, now_token->value);
+      token_t *now_tok = token_list[i];
+      printf("Token {name: %s, line: %d, value: %s}\n", now_tok->name, now_tok->lineno, now_tok->value);
     }
   }
 

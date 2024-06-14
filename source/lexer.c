@@ -35,7 +35,7 @@ token_t* getToken(FILE *fp, int *line) {
     char value[64];
     int i = 0;
 
-    while ((c = fgetc(fp)) != EOF) {
+    while ((c = (char) fgetc(fp)) != EOF) {
         switch (state) {
             case START:
                 if (isspace(c)) {
