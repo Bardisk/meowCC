@@ -1,0 +1,23 @@
+/* var declaration */ 
+int samplenumber;
+/* var(array) declaration */
+int samplearray[10];
+/* main with arguments */
+int main(int k, int b) {
+  /* local declarations */
+  int a[10];
+  int b;
+  int c;
+  /* expression */
+  b = (1 + 9) * 7;
+  /* a function call*/
+  c = samplefunc(b, c);
+  /* iteration statement */
+  while (c) ;
+  /* selection statement */
+  if (c > b) 
+    if (3 != c) ; 
+    else ;
+  /* return statement */
+  return 0;
+}

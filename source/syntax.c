@@ -771,16 +771,16 @@ syntax_t* var_declaration(bool last) {
   }
   id = advance();
   if ((istyp(LB) && isnxttyp(INT)) && istoktyp(2, RB) && istoktyp(3, SEMI)) {
-    // param -> type ID [ NUM ] ;
+    // var_declaration -> type ID [ NUM ] ;
     lb = advance();
     num = advance();
     rb = advance();
     semi = advance();
-    return new_symbol("param", type->token.lineno, 6, type, id, lb, num, rb, semi);
+    return new_symbol("var_declaration", type->token.lineno, 6, type, id, lb, num, rb, semi);
   } else if (istyp(SEMI)){
-    // param -> type ID ;
+    // var_declaration -> type ID ;
     semi = advance();
-    return new_symbol("param", type->token.lineno, 3, type, id, semi);
+    return new_symbol("var_declaration", type->token.lineno, 3, type, id, semi);
   } else {
     MALFORM;
   }

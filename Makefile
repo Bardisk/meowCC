@@ -29,9 +29,10 @@ $(BUILD_DIR)/%.o: %.c
 all: $(BUILD_DIR)/meowCC
 
 ERR_TESTS = $(wildcard err_tests/*.cm)
+EXTRA_TESTS = $(wildcard extra_tests/*.cm)
 EXPR_TESTS = $(wildcard expr_tests/*.exp)
 STMT_TESTS = $(wildcard expr_tests/*.stmt)
-ALL_TESTS := $(ERR_TESTS) sample.cm
+ALL_TESTS := $(ERR_TESTS) $(EXTRA_TESTS) sample.cm
 
 ifdef TESTNAME
 NOTTEST := $(shell echo $(ALL_TESTS) | sed 's/\S*$(TESTNAME)\S*//g')
